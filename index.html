@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>С Днём Рождения, Дима-Боров!</title>
+<style>
+  body {
+    margin: 0; font-family: 'Comic Sans MS', 'Arial', sans-serif;
+    background: linear-gradient(135deg, #ffb6c1, #ff69b4, #ffc0cb);
+    color: #8b005d; text-align: center; overflow: hidden;
+    height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    position: relative;
+  }
+
+  /* Фон со свинками */
+  #pig-background {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .pig {
+    position: absolute; font-size: 40px; opacity: 0.7;
+    animation: floatUp linear infinite;
+    user-select: none; cursor: pointer; pointer-events: auto;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+  }
+
+  .content { position: relative; z-index: 10; padding: 20px; }
+  h1 { font-size: clamp(24px, 5vw, 48px); text-shadow: 2px 2px 0 #fff, 0 0 20px #ff1493; margin-bottom: 10px; }
+  p { font-size: 20px; font-weight: bold; }
+
+  .scene { display: none; background: rgba(255, 255, 255, 0.6); padding: 30px; border-radius: 30px; border: 4px dashed #ff1493; box-shadow: 0 10px 30px rgba(255,20,147,0.3); }
+  .scene.active { display: block; animation: fadeIn 0.6s; }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; } }
+
+  button {
+    margin-top: 20px; padding: 16px 32px; font-size: 20px;
+    border: 4px solid #fff; border-radius: 50px; cursor: pointer;
+    background: linear-gradient(45deg, #ff1493, #ff69b4);
+    color: #fff; font-weight: bold; box-shadow: 0 8px 24px rgba(255,20,147,0.5);
+    transition: transform 0.15s; text-transform: uppercase;
+  }
+  button:hover { transform: scale(1.08); }
+  button:active { transform: scale(0.95); }
+
+  /* Секретная кнопка "Погладить Борова" */
+  #secretBtn {
+    background: transparent; border: 2px solid #ff1493; color: #ff1493;
+    font-size: 14px; padding: 8px 16px; margin-top: 30px; box-shadow: none;
+    transition: all 0.2s;
+  }
+  #secretBtn:hover {
+    background: #ff1493; color: #fff;
+    transform: scale(1.1) rotate(-2deg);
+  }
+  #secretBtn:active {
+    transform: scale(0.95) rotate(2deg);
+  }
+
+  /* Торт и лицо */
+  .cake-area { position: relative; width: 300px; height: 350px; margin: 0 auto; }
+  .face-container {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 160px; height: 160px; border-radius: 50%; overflow: hidden;
+    border: 8px solid #fff; box-shadow: 0 0 20px #ff69b4;
+    transition: transform 0.45s cubic-bezier(.68,-0.55,.27,1.55);
+    z-index: 3; background: #fff;
+  }
+  .face-container img { width: 100%; height: 100%; object-fit: cover; }
+  .face-container.splash { transform: translateX(-50%) translateY(120px) rotate(15deg) scale(0.8); }
+
+  .cake {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 260px; height: 140px; background: #ffb6c1;
+    border-radius: 20px 20px 10px 10px; z-index: 2;
+    box-shadow: inset 0 -20px 0 #d97f9e, 0 10px 30px rgba(0,0,0,0.2);
+  }
+  .cake::before {
+    content: ''; position: absolute; top: -20px; left: 0; right: 0; height: 40px;
+    background: radial-gradient(circle at 20% 50%, #fff 10px, transparent 11px) 0 0/50px 50px,
+                radial-gradient(circle at 80% 50%, #fff 10px, transparent 11px) 0 0/50px 50px,
+                #fff;
+    border-radius: 20px;
+  }
+  .cake::after {
+    content: '👑 🐗 👑'; position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+    font-size: 30px; white-space: nowrap;
+  }
+
+  /* Брызги */
+  .splat {
+    position: absolute; width: 16px; height: 16px; background: #ff69b4;
+    border-radius: 50%; pointer-events: none; z-index: 4;
+    animation: fly 0.7s ease-out forwards;
+  }
+  @keyframes fly { to { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; } }
+  
+  .counter { margin-top: 20px; font-size: 24px; color: #ff1493; font-weight: bold; text-shadow: 1px 1px 0 #fff; }
+
+  /* Свинский чек-лист */
+  .checklist { text-align: left; display: inline-block; margin-top: 15px; font-size: 18px; background: #fff; padding: 15px 25px; border-radius: 15px; border: 2px solid #ff69b4; }
+  .checklist li { margin-bottom: 8px; list-style-type: '🐽 '; }
+</style>
+</head>
+<body>
+
+  <!-- Фоновая музыка -->
+  <audio id="bgMusic" src="fon.mp3" loop></audio>
+
+  <div id="pig-background"></div>
+
+  <div class="content">
+    <!-- Сцена 1 -->
+    <section class="scene active" id="s1">
+      <h1>Внимание! Сегодня ДР у Димы-Борова! 🐗</h1>
+      <p>Готовься, сейчас будет свинская вечеринка! 🎉</p>
+      <button onclick="next('s2')">Начать праздник 🎀</button>
+    </section>
+
+    <!-- Сцена 2 -->
+    <section class="scene" id="s2">
+      <h1>Загадай желание, Боров…</h1>
+      <div style="font-size:80px">🕯️🎂🕯️</div>
+      <p>Свинки уже дуют на свечи!</p>
+      <button onclick="next('s3')">ЗАДУТЬ СВЕЧИ 💨</button>
+    </section>
+
+    <!-- Сцена 3 — макание -->
+    <section class="scene" id="s3">
+      <h1>А теперь — ТРАДИЦИЯ! 🍰</h1>
+      <div class="cake-area" id="cakeArea">
+        <div class="face-container" id="face">
+          <img src="dima.jpg" alt="Дима-Боров">
+        </div>
+        <div class="cake"></div>
+      </div>
+      <button id="dunkBtn" onclick="dunk()">МАКНУТЬ БОРОВА В ТОРТ 🐽</button>
+      <div class="counter" id="counter"></div>
+    </section>
+
+    <!-- Сцена 4 -->
+    <section class="scene" id="s4">
+      <h1>С Днём Рождения, Дима-Боров! 👑</h1>
+      <p style="font-size:22px">Ты официально признан <b>Абсолютным Боровом</b>!</p>
+      
+      <div class="checklist">
+        <ul>
+          <li>Сладкой жизни (но не в торте)</li>
+          <li>Полный пятачок денег</li>
+          <li>Чтобы друзья не макали лицом в торт (хотя поздно)</li>
+          <li>Хрюкотать от счастья каждый день</li>
+        </ul>
+      </div>
+
+      <div style="font-size:70px; margin-top: 10px;">🥳🐗🎈</div>
+      
+      <button onclick="location.reload()">Ещё раз! 🔁</button>
+      <br>
+      <button id="secretBtn" onclick="playOink(); salut();">Погладить Борова 🐽</button>
+    </section>
+  </div>
+
+<script>
+  let count = 0;
+  const MAX = 5;
+
+  // Генерация свинок на фоне
+  const pigEmojis = ['🐷', '🐖', '🐽', '🐗', '🎀', '🍰'];
+  const bg = document.getElementById('pig-background');
+  
+  function createPig() {
+    const pig = document.createElement('div');
+    pig.className = 'pig';
+    pig.textContent = pigEmojis[Math.floor(Math.random() * pigEmojis.length)];
+    pig.style.left = Math.random() * 100 + 'vw';
+    pig.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    pig.style.animationDelay = (Math.random() * 10) + 's';
+    pig.style.fontSize = (Math.random() * 30 + 20) + 'px';
+    
+    // Клик по свинке
+    pig.onclick = function(e) {
+      const hryu = document.createElement('div');
+      hryu.textContent = 'ХРЮ! 🐽';
+      hryu.style.position = 'absolute';
+      hryu.style.left = e.clientX + 'px';
+      hryu.style.top = e.clientY + 'px';
+      hryu.style.color = '#ff1493';
+      hryu.style.fontWeight = 'bold';
+      hryu.style.fontSize = '30px';
+      hryu.style.pointerEvents = 'none';
+      hryu.style.zIndex = '100';
+      hryu.style.animation = 'fly 0.8s ease-out forwards';
+      hryu.style.setProperty('--dx', '0px');
+      hryu.style.setProperty('--dy', '-100px');
+      document.body.appendChild(hryu);
+      setTimeout(() => hryu.remove(), 800);
+    };
+    
+    bg.appendChild(pig);
+    
+    // Удаляем и создаем новую, чтобы не засорять DOM
+    setTimeout(() => { pig.remove(); createPig(); }, (parseFloat(pig.style.animationDuration) + parseFloat(pig.style.animationDelay)) * 1000);
+  }
+
+  for (let i = 0; i < 25; i++) createPig();
+
+  function next(id) {
+    // Запускаем музыку при первом переходе (если она еще не играет)
+    const bgMusic = document.getElementById('bgMusic');
+    if (bgMusic.paused && bgMusic.currentTime === 0) {
+      bgMusic.volume = 0.4; // Фоновая музыка тише хрюканья
+      bgMusic.play().catch(e => console.log('Музыка ждет клика:', e));
+    }
+
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function dunk() {
+    const face = document.getElementById('face');
+    const area = document.getElementById('cakeArea');
+    face.classList.add('splash');
+    count++;
+    document.getElementById('counter').textContent = `Боров макнут: ${count} раз(а) 🐗`;
+
+    // Брызги крема
+    for (let i = 0; i < 18; i++) {
+      const s = document.createElement('div');
+      s.className = 'splat';
+      s.style.left = (area.offsetWidth/2) + 'px';
+      s.style.top = (area.offsetHeight - 60) + 'px';
+      s.style.setProperty('--dx', (Math.random()-0.5)*260 + 'px');
+      s.style.setProperty('--dy', (-Math.random()*180-40) + 'px');
+      area.appendChild(s);
+      setTimeout(() => s.remove(), 800);
+    }
+
+    // Звук шлепка (если файл есть в папке)
+    try { new Audio('splat.mp3').play(); } catch(e) {}
+
+    setTimeout(() => {
+      face.classList.remove('splash');
+      if (count >= MAX) {
+        document.getElementById('dunkBtn').textContent = "ВСЁ, ХВАТИТ! 🛑";
+        setTimeout(() => next('s4'), 600);
+      }
+    }, 900);
+  }
+
+  // Звук хрюканья для секретной кнопки + пауза фоновой музыки
+  function playOink() {
+    const bgMusic = document.getElementById('bgMusic');
+    
+    // 1. Ставим фоновую музыку на паузу
+    bgMusic.pause();
+    
+    try {
+      // 2. Играем хрюканье
+      const oink = new Audio('oink-pig.mp3');
+      oink.volume = 0.9;
+      
+      // 3. Когда хрюканье закончится, включаем музыку обратно
+      oink.onended = function() {
+        bgMusic.play().catch(e => console.log('Автовоспроизведение заблокировано:', e));
+      };
+      
+      oink.play();
+    } catch(e) {
+      console.log('Звук oink-pig.mp3 не найден или заблокирован браузером');
+      // Если звук хрюканья не сработал, возвращаем музыку сразу
+      bgMusic.play().catch(e => console.log(e));
+    }
+  }
+
+  // Секретная кнопка "Салют"
+  function salut() {
+    const emojis = ['🎉', '🎊', '🐗', '🐽', '🎂', '🎈', '👑'];
+    for (let i = 0; i < 40; i++) {
+      const el = document.createElement('div');
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.position = 'absolute';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.top = '100vh';
+      el.style.fontSize = (Math.random() * 30 + 20) + 'px';
+      el.style.pointerEvents = 'none';
+      el.style.zIndex = '100';
+      el.style.transition = 'transform 2s cubic-bezier(0.25, 1, 0.5, 1), opacity 2s';
+      
+      document.body.appendChild(el);
+      
+      setTimeout(() => {
+        el.style.transform = `translateY(-${Math.random() * 80 + 20}vh) rotate(${Math.random() * 720}deg)`;
+        el.style.opacity = '0';
+      }, 50);
+      
+      setTimeout(() => el.remove(), 2100);
+    }
+  }
+</script>
+</body>
+</html>
